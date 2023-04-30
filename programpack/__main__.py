@@ -17,7 +17,7 @@ Commands:
         Convert file to executable (linux) by given name.
         `chmod`'s the file and adds a shebang'''
 
-if 'help' in argv1
+if 'help' in argv1:
     print(help_message)
 elif argv1 == 'convert':
     if argv2: propack.convert_file_to_executable(argv2)
