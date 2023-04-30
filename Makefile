@@ -14,3 +14,5 @@ sclean:
 	rm -rf __pycache__
 	rm -rf build
 	rm -rf dist
+sgeneratechangelog:
+	git log --pretty="- %s" > CHANGELOG.md
