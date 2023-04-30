@@ -1,0 +1,7 @@
+{
+    "name": "testapp",
+    "description": "A test application",
+    "author": "VBPROGER",
+    "version": "1.0.0",
+    "mainfile": "App"
+}
