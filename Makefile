@@ -1,5 +1,5 @@
 SHELL := /usr/bin/env bash
-.SILENT: sinstall stest sclean
+.SILENT: sinstall stest sclean sgeneratechangelog
 
 sinstall:
 	chmod +x setup.py
