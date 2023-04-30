@@ -10,4 +10,7 @@ stest:
 	python3 test/test.py
 sclean:
 	rm -rf *.egg-info
+	rm -rf *.egg
 	rm -rf __pycache__
+	rm -rf build
+	rm -rf dist
