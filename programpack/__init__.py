@@ -61,6 +61,6 @@ class PackedProgram:
         self.archive.close()
         self.closed = property(lambda: True) # , _PropertyBlocked()
 def convert_file_to_executable(file_name):
-    chmod(0o777, file_name)
+    chmod(file_name, 0o777)
     with open(file_name, 'rb+') as f: data = f.read()
     with open(file_name, 'wb+') as f: f.write(b'#!/usr/bin/env -S python3 -m programpack run\n' + data)
