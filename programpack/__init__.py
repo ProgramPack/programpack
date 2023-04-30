@@ -54,6 +54,6 @@ class PackedProgram:
             remove(tempf_name)
             rmtree(tmpresfold_n, True)
     def close(self):
-        rmtree(self.tmpresfold)
+        rmtree(self.tmpresfold, True)
         self.archive.close()
         self.closed = property(lambda: True) # , _PropertyBlocked()

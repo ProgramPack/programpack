@@ -1,0 +1,7 @@
+{
+    "name": "myprog",
+    "description": "Simple window",
+    "author": "VBPROGER",
+    "version": "1.0.0",
+    "mainfile": "App"
+}
