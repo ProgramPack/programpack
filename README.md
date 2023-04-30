@@ -5,7 +5,7 @@ Paste the following commands in terminal:
 ```bash
 git clone https://github.com/VBPROGER/programpack.git
 cd programpack
-make sinstall
+make sinstall && make sclean
 cd ..
 false && rm -rf programpack # Change "false" to "true" if you want to delete the cloned repository
 ```
