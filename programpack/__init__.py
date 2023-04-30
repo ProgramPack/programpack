@@ -16,6 +16,7 @@ class PackedProgram:
     def __init__(self, archive):
         self.archive = zipfile.ZipFile(archive)
         self.tmpresfold = join(self.tempdir, self.resfold)
+        self.call_args = []
     def read(self):
         '''Read data from archive'''
         self.manifest = loads(_decode(self.archive.read('manifest.json')))
@@ -38,6 +39,8 @@ class PackedProgram:
                 f.write(self.read_main_file())
                 del f
             chmod(tempf_name, 0o777)
+        args = [tempf_name]
+        args.extend(self.call_args)
         if w_resources:
             res = self.read_resources()
             tmpresfold_n = join(self.tmpresfold, self.generate_unique_id())
@@ -48,8 +51,8 @@ class PackedProgram:
                     if key and value:
                         with open(join(tmpresfold_n, key), 'wb+') as f:
                             f.write(value['content'])
-
-        if autocall: call([tempf_name])
+            args.append(tmpresfold_n)
+        if autocall: call(args)
         if delete:
             remove(tempf_name)
             rmtree(tmpresfold_n, True)
