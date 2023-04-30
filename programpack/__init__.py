@@ -60,3 +60,7 @@ class PackedProgram:
         rmtree(self.tmpresfold, True)
         self.archive.close()
         self.closed = property(lambda: True) # , _PropertyBlocked()
+def convert_file_to_executable(file_name):
+    chmod(0o777, file_name)
+    with open(file_name, 'rb+') as f: data = f.read()
+    with open(file_name, 'wb+') as f: f.write(b'#!/usr/bin/env -S python3 -m programpack\n' + data)
