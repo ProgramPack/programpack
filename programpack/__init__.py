@@ -7,6 +7,10 @@ from os import chmod, remove, makedirs as mkdir
 from subprocess import call
 from shutil import rmtree
 
+shebang    = b'#!/usr/bin/env -S python3 -m programpack run\n'
+_empty     = ''
+_emptyb    = b''
+
 def _decode(b: bytes or bytearray) -> str: return b.decode('utf-8')
 def _PropertyBlocked(): raise RuntimeError('Property is privated; blocked')
 
@@ -63,4 +67,7 @@ class PackedProgram:
 def convert_file_to_executable(file_name):
     chmod(file_name, 0o777)
     with open(file_name, 'rb+') as f: data = f.read()
-    with open(file_name, 'wb+') as f: f.write(b'#!/usr/bin/env -S python3 -m programpack run\n' + data)
+    with open(file_name, 'wb+') as f: f.write(shebang + data)
+def deconvert(file_name):
+    with open(file_name, 'rb+') as f: data = f.read()
+    with open(file_name, 'wb+') as f: f.write(data.replace(shebang, _emptyb))
