@@ -15,13 +15,18 @@ Commands:
         Run file by given name
     convert <fn>
         Convert file to executable (linux) by given name.
-        `chmod`'s the file and adds a shebang'''
+        `chmod`'s the file and adds a shebang
+    deconvert <fn>
+        Will attempt to remove the shebang from given file'''
 
 if 'help' in argv1:
     print(help_message)
 elif argv1 == 'convert':
     if argv2: propack.convert_file_to_executable(argv2)
     else: print('usage: convert <filename>')
+elif argv1 == 'deconvert':
+    if argv2: propack.deconvert(argv2)
+    else: print('usage: deconvert <filename>')
 elif argv1 == 'run':
     if argv2:
         program = propack.PackedProgram(argv2)
