@@ -6,6 +6,8 @@ try: argv1 = args[1]
 except IndexError: argv1 = None
 try: argv2 = args[2]
 except IndexError: argv2 = None
+try: argv3 = args[3]
+except IndexError: argv3 = None
 
 help_message = '''--- ProgramPack ---
 Commands:
@@ -32,7 +34,7 @@ elif argv1 == 'run':
     if argv2:
         program = propack.PackedProgram(argv2)
         program.read()
-        if argv2.lower().strip() in ('true', '1'): program.update_icon()
+        if argv3.lower().strip() in ('true', '1'): program.update_icon()
         program.run()
         program.close()
     else: print('usage: run <filename>')
