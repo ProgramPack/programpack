@@ -2,7 +2,7 @@
 import zipfile
 from json import loads, dumps
 from tempfile import NamedTemporaryFile as TempFile, gettempdir
-from os.path import sep, join, basename, dirname, relpath, expanduser
+from os.path import sep, join, basename, dirname, abspath, relpath, expanduser
 from os import chmod, remove, makedirs as mkdir, listdir, chdir
 from subprocess import run
 from shutil import rmtree, move as move_file, make_archive as mkzip
@@ -152,7 +152,7 @@ def deconvert(file_name):
 def create_archive(source_directory: str = '', archive_name: str = '', password: str = None, convert: bool = False):
     archive_name = basename(archive_name).rstrip('.zip')
     chdir(source_directory)
-    mkzip(relpath(join('..', archive_name)), 'zip', source_directory)
+    mkzip(abspath(join('..', archive_name)), 'zip', source_directory)
     if password:
         password = (password or '').encode('utf-8', errors = 'ignore')
         zipfile.ZipFile(archive_name).setpassword(password)
