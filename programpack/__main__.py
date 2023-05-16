@@ -11,8 +11,9 @@ help_message = '''--- ProgramPack ---
 Commands:
     help
         Display this message
-    run <fn>
-        Run file by given name
+    run <fn> [update?]
+        Run file by given name. If update == true or 1
+        then will update the icon
     convert <fn>
         Convert file to executable (linux) by given name.
         `chmod`'s the file and adds a shebang
@@ -31,6 +32,7 @@ elif argv1 == 'run':
     if argv2:
         program = propack.PackedProgram(argv2)
         program.read()
+        if argv2.lower().strip() in ('true', '1'): program.update_icon()
         program.run()
         program.close()
     else: print('usage: run <filename>')
