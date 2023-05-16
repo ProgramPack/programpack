@@ -34,7 +34,8 @@ elif argv1 == 'run':
     if argv2:
         program = propack.PackedProgram(argv2)
         program.read()
-        if argv3.lower().strip() in ('true', '1'): program.update_icon()
+        if argv3:
+            if argv3.lower().strip() in ('true', '1'): program.update_icon()
         program.run()
         program.close()
     else: print('usage: run <filename>')
