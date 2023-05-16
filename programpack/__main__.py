@@ -26,7 +26,9 @@ Commands:
         --virtual:
         Enable virtual environment for this file
     deconvert <fn>
-        Will attempt to remove the shebang(s) from given file'''
+        Will attempt to remove the shebang(s) from given file
+    create <source> <destination>
+        Create archive from directory name'''
 
 if 'help' in str(argv1):
     print(help_message)
@@ -44,6 +46,11 @@ elif argv1 == 'run':
         program.run(virtual = ('--virtual' in args))
         program.close()
     else: print('usage: run <filename>')
+elif argv1 == 'create':
+    if argv2 and argv3:
+        propack.create_archive(argv2, argv3 or 'create')
+    else:
+        print('usage: create <source> <destination>')
 else:
     if len(args) <= 1: print('No args given. See --help.')
     else: print('Invalid arguments. See --help for more info.')
