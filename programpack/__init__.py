@@ -144,7 +144,7 @@ def convert_file_to_executable(file_name: str = '', virtual: bool = False):
     '''Make the file executable by other programs'''
     chmod(file_name, 0o777)
     with open(file_name, 'rb+') as f: data = f.read()
-    with open(file_name, 'wb+') as f: f.write(shebang_v if virtual else shebang + data)
+    with open(file_name, 'wb+') as f: f.write((shebang_v if virtual else shebang) + data)
 def deconvert(file_name):
     '''Remove shebang from file'''
     with open(file_name, 'rb+') as f: data = f.read()
