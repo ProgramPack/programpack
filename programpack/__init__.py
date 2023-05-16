@@ -150,7 +150,7 @@ def deconvert(file_name):
     with open(file_name, 'rb+') as f: data = f.read()
     with open(file_name, 'wb+') as f: f.write(data.replace(shebang, _emptyb).replace(shebang_v, _emptyb))
 def create_archive(source_directory: str = '', archive_name: str = '', password: str = None, convert: bool = False):
-    archive_name = basename(archive_name).rstrip('.zip')
+    archive_name = basename(archive_name).removesuffix('.zip')
     chdir(source_directory)
     mkzip(abspath(join('..', archive_name)), 'zip', source_directory)
     if password:
