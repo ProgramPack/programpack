@@ -13,19 +13,25 @@ help_message = '''--- ProgramPack ---
 Commands:
     help
         Display this message
-    run <fn> [noupdate]
-        Run file by given name. If `noupdate` == `false` or `0`
-        then it will not update the icon
-    convert <fn>
+    run <fn> [--disable-icon-update] [--virtual]
+        Run file by given name.
+        --disable-icon-update:
+        Do not update the icon
+        --virtual:
+        Will execute in virtual environment.
+        May cause compatibility issues.
+    convert <fn> [--virtual]
         Convert file to executable (linux) by given name.
         `chmod`'s the file and adds a shebang
+        --virtual:
+        Enable virtual environment for this file
     deconvert <fn>
-        Will attempt to remove the shebang from given file'''
+        Will attempt to remove the shebang(s) from given file'''
 
-if 'help' in argv1:
+if 'help' in str(argv1):
     print(help_message)
 elif argv1 == 'convert':
-    if argv2: propack.convert_file_to_executable(argv2)
+    if argv2: propack.convert_file_to_executable(argv2, virtual = ('--virtual' in args))
     else: print('usage: convert <filename>')
 elif argv1 == 'deconvert':
     if argv2: propack.deconvert(argv2)
@@ -34,9 +40,10 @@ elif argv1 == 'run':
     if argv2:
         program = propack.PackedProgram(argv2)
         program.read()
-        if not str(argv3).lower().strip() in ('false', '0'): program.update_icon()
-        program.run()
+        if not '--disable-icon-update' in args: program.update_icon()
+        program.run(virtual = ('--virtual' in args))
         program.close()
     else: print('usage: run <filename>')
 else:
-    print('No args given.')
+    if len(args) <= 1: print('No args given. See --help.')
+    else: print('Invalid arguments. See --help for more info.')

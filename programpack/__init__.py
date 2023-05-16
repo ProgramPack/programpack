@@ -3,7 +3,7 @@ import zipfile
 from json import loads, dumps
 from tempfile import NamedTemporaryFile as TempFile, gettempdir
 from os.path import sep, join, basename, dirname, relpath, expanduser
-from os import chmod, remove, makedirs as mkdir
+from os import chmod, remove, makedirs as mkdir, listdir, chdir
 from subprocess import run
 from shutil import rmtree, move as move_file
 from hashlib import sha256
@@ -11,6 +11,7 @@ from platform import system
 from warnings import warn
 
 shebang    = b'#!/usr/bin/env -S python3 -m programpack run\n'
+shebang_v  = b'#!/usr/bin/env -S python3 -m programpack run --virtual\n'
 _empty     = ''
 _emptyb    = b''
 _os        = system().strip().lower()
@@ -52,7 +53,7 @@ class PackedProgram:
         m_res = m.get('resources_folder')
         m_icon_path = m.get('icon')
 
-        self.icon_path = 'icon'
+        self.icon_path = False
 
         if m_res: self.resfold = basename(m_res) + sep
         if m_icon_path: self.icon_path = basename(m_icon_path)
@@ -72,7 +73,7 @@ class PackedProgram:
     def generate_unique_id(self):
         '''Generate unique identifier'''
         return self.manifest['author'] + '.' + self.manifest['name']
-    def run(self, w_resources: bool = True, autocall: bool = True, delete: bool = True):
+    def run(self, w_resources: bool = True, autocall: bool = True, delete: bool = True, virtual: bool = False):
         '''Execute ProgramPack file'''
         with TempFile(mode = 'w+', delete = False) as tempf:
             tempf_name = tempf.name
@@ -93,7 +94,13 @@ class PackedProgram:
                         with open(join(tmpresfold_n, key), 'wb+') as f:
                             f.write(value['content'])
             args.append(tmpresfold_n)
-        if autocall: run(args)
+        if autocall:
+            if virtual:
+                chdir(tmpresfold_n)
+                run(args)
+            else:
+                chdir(expanduser('~'))
+                run(args)
         if delete:
             remove(tempf_name)
             rmtree(tmpresfold_n, True)
@@ -102,8 +109,9 @@ class PackedProgram:
         rmtree(self.tmpresfold, True)
         self.archive.close()
         self.closed = property(lambda: True) # , _PropertyBlocked()
-    def update_icon(self, _clean: bool = False):
+    def update_icon(self, _clean: bool = False) -> bool:
         '''Read file icon (if exists) and update it if needed'''
+        if not self.icon_path: return False
         data = self.archive.read(self.icon_path)
         with TempFile(mode = 'wb+', delete = False) as tempf:
             tempf.write(data)
@@ -131,12 +139,13 @@ class PackedProgram:
                  ResourceWarning
             )
             remove(tempf.name)
-def convert_file_to_executable(file_name):
+        return True
+def convert_file_to_executable(file_name: str = '', virtual: bool = False):
     '''Make the file executable by other programs'''
     chmod(file_name, 0o777)
     with open(file_name, 'rb+') as f: data = f.read()
-    with open(file_name, 'wb+') as f: f.write(shebang + data)
+    with open(file_name, 'wb+') as f: f.write(shebang_v if virtual else shebang + data)
 def deconvert(file_name):
     '''Remove shebang from file'''
     with open(file_name, 'rb+') as f: data = f.read()
-    with open(file_name, 'wb+') as f: f.write(data.replace(shebang, _emptyb))
+    with open(file_name, 'wb+') as f: f.write(data.replace(shebang, _emptyb).replace(shebang_v, _emptyb))
