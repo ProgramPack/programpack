@@ -5,7 +5,7 @@ from tempfile import NamedTemporaryFile as TempFile, gettempdir
 from os.path import sep, join, basename, dirname, relpath, expanduser
 from os import chmod, remove, makedirs as mkdir, listdir, chdir
 from subprocess import run
-from shutil import rmtree, move as move_file
+from shutil import rmtree, move as move_file, make_archive as mkzip
 from hashlib import sha256
 from platform import system
 from warnings import warn
@@ -149,3 +149,10 @@ def deconvert(file_name):
     '''Remove shebang from file'''
     with open(file_name, 'rb+') as f: data = f.read()
     with open(file_name, 'wb+') as f: f.write(data.replace(shebang, _emptyb).replace(shebang_v, _emptyb))
+def create_archive(source_directory: str = '', archive_name: str = '', password: str = None, convert: bool = False):
+    password = password.encode('utf-8', errors = 'ignore')
+    archive_name = basename(archive_name)
+    chdir(source_directory)
+    mkzip(archive_name, 'zip', source_directory)
+    if password: ZipFile(archive_name).setpassword(password)
+    if convert: convert(archive_name)
