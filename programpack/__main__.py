@@ -40,7 +40,8 @@ elif argv1 == 'deconvert':
     else: print('usage: deconvert <filename>')
 elif argv1 == 'run':
     if argv2:
-        program = propack.PackedProgram(argv2)
+        if argv2 == '--virtual': program = propack.PackedProgram(argv3)
+        else: program = propack.PackedProgram(argv2)
         program.read()
         if not '--disable-icon-update' in args: program.update_icon()
         program.run(virtual = ('--virtual' in args))
