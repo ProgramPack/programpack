@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from sys import argv as args
+from os import system as execute
 import programpack as propack
 
 try: argv1 = args[1]
@@ -52,6 +53,7 @@ elif argv1 == 'create':
         propack.create_archive(argv2, argv3 or 'create')
     else:
         print('usage: create <source> <destination>')
+elif arv1 == 'pull': execute('git pull')
 else:
     if len(args) <= 1: print('No args given. See --help.')
     else: print('Invalid arguments. See --help for more info.')
