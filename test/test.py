@@ -10,5 +10,11 @@ class TestProgramPack(unittest.TestCase):
         program.run()
         program.close()
 
+        program = self.propack.PackedProgram('test/also_testing.propack')
+        program.read()
+        program.update_icon()
+        program.run()
+        program.close()
+
 if __name__ == '__main__':
     unittest.main()
