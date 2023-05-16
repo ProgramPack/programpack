@@ -2,17 +2,36 @@
 import zipfile
 from json import loads, dumps
 from tempfile import NamedTemporaryFile as TempFile, gettempdir
-from os.path import sep, join, basename, dirname, relpath
+from os.path import sep, join, basename, dirname, relpath, expanduser
 from os import chmod, remove, makedirs as mkdir
 from subprocess import run
-from shutil import rmtree
+from shutil import rmtree, move as move_file
+from hashlib import sha256
+from platform import system
+from warnings import warn
 
 shebang    = b'#!/usr/bin/env -S python3 -m programpack run\n'
 _empty     = ''
 _emptyb    = b''
+_os        = system().strip().lower()
 
 def _decode(b: bytes or bytearray) -> str: return b.decode('utf-8')
 def _PropertyBlocked(): raise RuntimeError('Property is privated; blocked')
+def _get_file_sha256(filename: str = ''):
+    current_hash = sha256(usedforsecurity = False)
+    buffer_size = 65536
+    with open(filename, 'rb+') as f:
+        while True:
+            data = f.read(buffer_size)
+            if not data: break
+            current_hash.update(data)
+    return current_hash.hexdigest()
+def _getcachedir() -> str:
+    cache_directory = ''
+    if _os == 'linux' or _os == 'darwin': cache_directory = expanduser('~/.cache')
+    else: cache_directory = r'C:\Windows\Temp\Cached'
+    mkdir(cache_directory, exist_ok = True)
+    return cache_directory
 
 class PackedProgram:
     tempdir = gettempdir()
@@ -83,21 +102,35 @@ class PackedProgram:
         rmtree(self.tmpresfold, True)
         self.archive.close()
         self.closed = property(lambda: True) # , _PropertyBlocked()
-    def update_icon(self):
+    def update_icon(self, _clean: bool = False):
         '''Read file icon (if exists) and update it if needed'''
         data = self.archive.read(self.icon_path)
-        with TempFile(mode = 'wb+') as tempf:
+        with TempFile(mode = 'wb+', delete = False) as tempf:
             tempf.write(data)
             tempf_name = tempf.name
-            run([
-                'gio',
-                'set'
-                '-t',
-                'string',
-                self.original_name or 'unknown',
-                f'metadata::custom-icon',
-                'file://{tempf_name}'
-            ])
+            tempf.name = (
+                join(
+                    _getcachedir(), 
+                    'icon_' + _get_file_sha256(tempf_name)
+                )
+                + '.png'
+            )
+            move_file(tempf_name, tempf.name)
+            del tempf_name
+            source_filename = self.original_name.strip() or 'unknown'
+            run(
+                [
+                    f'gio set -t string {source_filename} metadata::custom-icon file://{tempf.name}'
+                ],
+                shell = True,
+                executable = '/usr/bin/bash'
+                )
+        if _clean:
+            warn(
+                'Consider setting _clean to False because after updating icon will disappear',
+                 ResourceWarning
+            )
+            remove(tempf.name)
 def convert_file_to_executable(file_name):
     '''Make the file executable by other programs'''
     chmod(file_name, 0o777)
