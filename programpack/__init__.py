@@ -94,11 +94,10 @@ class PackedProgram:
         args.extend(self.call_args)
         if w_resources:
             tmpresfold_n = join(self.tmpresfold, self.generate_unique_id())
-            if res:
-                mkdir(tmpresfold_n, exist_ok = True)
-                for file in self.archive.namelist():
-                    if file.startswith(self.resfold): self.archive.extract(file, join(tmpresfold_n, basename(file)))
-                    del file
+            mkdir(tmpresfold_n, exist_ok = True)
+            for file in self.archive.namelist():
+                if file.startswith(self.resfold): self.archive.extract(file, join(tmpresfold_n, basename(file)))
+                del file
             args.append(tmpresfold_n)
         if autocall:
             if virtual:
