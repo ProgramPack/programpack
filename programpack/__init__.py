@@ -182,7 +182,7 @@ def get_manifest(file_name: str = '') -> dict or bool:
     return program.manifest
 def hub_get_id_by(name: str, domain: str, author: str, *args, **kwargs): return _server_p_rbase + generate_unique_id_local(name, domain, author, *args, **kwargs) + '.json'
 def hub_get_meta(name: str, domain: str, author: str): return _get_json(hub_get_id_by(name, domain, author))
-def hub_download_s(name: str, domain: str, author: str): return _get_text(hub_get_meta(name, domain, author))
+def hub_download_s(name: str, domain: str, author: str): return _get_text(hub_get_meta(name, domain, author)['link'])
 def hub_download(name: str, domain: str, author: str, output: str = 'download.propack'):
     data = hub_download_s(name, domain, author)
     with open(str(output).strip(), 'rb+') as f:
