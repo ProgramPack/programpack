@@ -67,6 +67,10 @@ class PackedProgram:
         return self.archive.read(self.main_file)
     def read_resources(self) -> dict:
         '''Read "Resources" folder and return dictionary'''
+        warn(
+            'Function "read_resources" may be deprecated in future',
+            DeprecationWarning
+        )
         resources_dict = {}
         for resource in self.archive.namelist():
             if resource.startswith(self.resfold):
@@ -89,15 +93,12 @@ class PackedProgram:
         args = [tempf_name]
         args.extend(self.call_args)
         if w_resources:
-            res = self.read_resources()
             tmpresfold_n = join(self.tmpresfold, self.generate_unique_id())
             if res:
                 mkdir(tmpresfold_n, exist_ok = True)
-                for key in res:
-                    value = res[key]
-                    if key and value:
-                        with open(join(tmpresfold_n, key), 'wb+') as f:
-                            f.write(value['content'])
+                for file in self.archive.namelist():
+                    if file.startswith(self.resfold): self.archive.extract(file, join(tmpresfold_n, basename(file)))
+                    del file
             args.append(tmpresfold_n)
         if autocall:
             if virtual:
