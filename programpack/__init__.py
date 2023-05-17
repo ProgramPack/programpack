@@ -95,9 +95,15 @@ class PackedProgram:
         if w_resources:
             tmpresfold_n = join(self.tmpresfold, self.generate_unique_id())
             mkdir(tmpresfold_n, exist_ok = True)
-            for file in self.archive.namelist():
-                if file.startswith(self.resfold): self.archive.extract(file, join(tmpresfold_n, basename(file)))
-                del file
+            for current_file in self.archive.namelist():
+                if current_file.startswith(self.resfold):
+                    dest = join(tmpresfold_n, current_file.removeprefix(self.resfold))
+                    if current_file.endswith(sep): mkdir(dest, exist_ok = True)
+                    else:
+                        self.archive.extract(current_file, tmpresfold_n)
+                        move_file(join(tmpresfold_n, current_file), join(tmpresfold_n, dest))
+                        rmtree(join(tmpresfold_n, 'Resources'))
+                del current_file
             args.append(tmpresfold_n)
         if autocall:
             if virtual:
