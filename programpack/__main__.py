@@ -40,7 +40,9 @@ Commands:
     create <source> <destination>
         Create archive from directory name
     pull
-        Update `ProgramPack` to latest version'''
+        Update `ProgramPack` to latest version
+    version
+        See current version'''
 
 if 'help' in str(argv1):
     print(help_message)
@@ -65,6 +67,7 @@ elif argv1 == 'create':
     else:
         print('usage: create <source> <destination>')
 elif argv1 == 'pull': pull_from_git()
+elif argv1 == 'version': print('ProgramPack - Version {}'.format(propack.__version__))
 else:
     if len(args) <= 1: print('No args given. See --help.')
     else: print('Invalid arguments. See --help for more info.')
