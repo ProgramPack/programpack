@@ -18,6 +18,12 @@ try: argv2 = args[2]
 except IndexError: argv2 = None
 try: argv3 = args[3]
 except IndexError: argv3 = None
+try: argv4 = args[4]
+except IndexError: argv4 = None
+try: argv5 = args[5]
+except IndexError: argv5 = None
+try: argv6 = args[6]
+except IndexError: argv6 = None
 
 help_message = '''--- ProgramPack ---
 Commands:
@@ -44,7 +50,10 @@ Commands:
     version
         See current version
     manifest <fn>
-        Print manifest of file'''
+        Print manifest of file
+    hub
+        hub download <name> <domain> <author>
+            Will download ProgramPack file by name, domain and author from hub.'''
 
 if 'help' in str(argv1):
     print(help_message)
@@ -73,6 +82,16 @@ elif argv1 == 'version': print('ProgramPack - Version {}'.format(propack.__versi
 elif argv1 == 'manifest':
     if argv2:
         print(propack.get_manifest(argv2), end = '')
+elif argv1 == 'hub':
+    if argv2:
+        if argv2 == 'download':
+            if argv3 and argv4 and argv5:
+                propack.hub_download(argv3, argv4, argv5, argv6)
+            else:
+                print('usage: hub download <name> <domain> <author> [output]')
+        else: print('Unknown hub command. See --help')
+    else:
+        print('usage: hub <download, ...> <>')
 else:
     if len(args) <= 1: print('No args given. See --help.')
     else: print('Invalid arguments. See --help for more info.')
