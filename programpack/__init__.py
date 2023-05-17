@@ -9,18 +9,24 @@ from shutil import rmtree, move as move_file, make_archive as mkzip
 from hashlib import sha256
 from platform import system
 from warnings import warn
+from requests import get as r_get
 
 __all__ = [
     'PackedProgram', 'convert_file_to_executable', 'deconvert', 'create_archive'
 ]
 __version__ = '0.0.1'
 
-shebang    = b'#!/usr/bin/env -S python3 -m programpack run\n'
-shebang_v  = b'#!/usr/bin/env -S python3 -m programpack run --virtual\n'
-_empty     = ''
-_emptyb    = b''
-_os        = system().strip().lower()
+shebang           = b'#!/usr/bin/env -S python3 -m programpack run\n'
+shebang_v         = b'#!/usr/bin/env -S python3 -m programpack run --virtual\n'
+_empty            = ''
+_emptyb           = b''
+_os               = system().strip().lower()
+_server           = 'https://github.com/ProgramPack/hub'
+_request_base     = '{}/raw/main/apps/'.format(_server)
+_server_p_rbase   = _server + _request_base
 
+def _get_text(url): return r_get(url).text
+def _get_json(url): return r_get(url).json()
 def _decode(b: bytes or bytearray) -> str: return b.decode('utf-8')
 def _PropertyBlocked(): raise RuntimeError('Property is privated; blocked')
 def _get_file_sha256(filename: str = ''):
@@ -151,6 +157,7 @@ class PackedProgram:
             )
             remove(tempf.name)
         return True
+def generate_unique_id_local(name: str = 'unnamed', domain: str = 'com', author: str = 'unknown'): return '{}.{}.{}'.format(domain, author, name)
 def convert_file_to_executable(file_name: str = '', virtual: bool = False):
     '''Make the file executable by other programs'''
     chmod(file_name, 0o777)
@@ -173,3 +180,10 @@ def get_manifest(file_name: str = '') -> dict or bool:
     program = PackedProgram(str(file_name).strip())
     program.read()
     return program.manifest
+def hub_get_id_by(name: str, domain: str, author: str, *args, **kwargs): return _server_p_rbase + generate_unique_id_local(name, domain, author, *args, **kwargs) + '.json'
+def hub_get_meta(name: str, domain: str, author: str): return _get_json(hub_get_id_by(name, domain, author))
+def hub_download_s(name: str, domain: str, author: str): return _get_text(hub_get_meta(name, domain, author))
+def hub_download(output: str = 'download.propack', name: str, domain: str, author: str):
+    data = hub_download_s(name, domain, author)
+    with open(str(output).strip(), 'r+') as f:
+        f.write(data)
