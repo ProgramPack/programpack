@@ -1,0 +1,7 @@
+{
+    "name": "blank",
+    "description": "Application that does nothing",
+    "author": "VBPROGER",
+    "version": "1.0.0",
+    "mainfile": "App"
+}
