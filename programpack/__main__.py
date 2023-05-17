@@ -4,7 +4,11 @@ from os import system as execute
 import programpack as propack
 
 def pull_from_git():
-    execute('git pull')
+    execute('''git clone https://github.com/VBPROGER/programpack.git -b experimental && mv programpack programpack-exp-branch;
+cd programpack-exp-branch;
+make sinstall && make sclean;
+cd ..;
+false && rm -rf programpack-exp-branch;''')
 
 try: argv1 = args[1]
 except IndexError: argv1 = None
