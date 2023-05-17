@@ -3,6 +3,9 @@ from sys import argv as args
 from os import system as execute
 import programpack as propack
 
+def pull_from_git():
+    execute('git pull')
+
 try: argv1 = args[1]
 except IndexError: argv1 = None
 try: argv2 = args[2]
@@ -29,7 +32,9 @@ Commands:
     deconvert <fn>
         Will attempt to remove the shebang(s) from given file
     create <source> <destination>
-        Create archive from directory name'''
+        Create archive from directory name
+    pull
+        Update `ProgramPack` to latest version'''
 
 if 'help' in str(argv1):
     print(help_message)
@@ -53,7 +58,7 @@ elif argv1 == 'create':
         propack.create_archive(argv2, argv3 or 'create')
     else:
         print('usage: create <source> <destination>')
-elif arv1 == 'pull': execute('git pull')
+elif argv1 == 'pull': pull_from_git()
 else:
     if len(args) <= 1: print('No args given. See --help.')
     else: print('Invalid arguments. See --help for more info.')
