@@ -71,9 +71,8 @@ elif argv1 == 'create':
 elif argv1 == 'pull': pull_from_git()
 elif argv1 == 'version': print('ProgramPack - Version {}'.format(propack.__version__))
 elif argv1 == 'manifest':
-    program = propack.PackedProgram(argv2)
-    program.read()
-    print(prorgam.manifest, end = '')
+    if argv2:
+        print(propack.get_manifest(argv2), end = '')
 else:
     if len(args) <= 1: print('No args given. See --help.')
     else: print('Invalid arguments. See --help for more info.')
