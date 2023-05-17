@@ -10,6 +10,11 @@ from hashlib import sha256
 from platform import system
 from warnings import warn
 
+__all__ = [
+    'PackedProgram', 'convert_file_to_executable', 'deconvert', 'create_archive'
+]
+__version__ = '0.0.1'
+
 shebang    = b'#!/usr/bin/env -S python3 -m programpack run\n'
 shebang_v  = b'#!/usr/bin/env -S python3 -m programpack run --virtual\n'
 _empty     = ''
