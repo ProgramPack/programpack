@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 from sys import argv as args
 from os import system as execute
+from tempfile import gettempdir as get_temp_dir
 import programpack as propack
 
 def pull_from_git():
-    execute('''git clone https://github.com/VBPROGER/programpack.git -b experimental && mv programpack programpack-exp-branch;
+    execute(f'''cd {get_temp_dir()};
+git clone https://github.com/VBPROGER/programpack.git -b experimental && mv programpack programpack-exp-branch;
 cd programpack-exp-branch;
 make sinstall && make sclean;
 cd ..;
-false && rm -rf programpack-exp-branch;''')
+true && rm -rf programpack-exp-branch;''')
 
 try: argv1 = args[1]
 except IndexError: argv1 = None
