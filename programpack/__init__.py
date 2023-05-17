@@ -162,3 +162,8 @@ def create_archive(source_directory: str = '', archive_name: str = '', password:
         password = (password or '').encode('utf-8', errors = 'ignore')
         zipfile.ZipFile(archive_name).setpassword(password)
     if convert: convert(archive_name)
+def get_manifest(file_name: str = '') -> dict or bool:
+    if not file_name: return False
+    program = propack.PackedProgram(str(file_name).strip())
+    program.read()
+    return program.manifest
