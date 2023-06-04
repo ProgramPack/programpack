@@ -6,7 +6,7 @@ import programpack as propack
 
 def pull_from_git():
     execute(f'''cd {get_temp_dir()};
-git clone https://github.com/VBPROGER/programpack.git -b experimental && mv programpack programpack-exp-branch;
+git clone https://github.com/ProgramPack/programpack.git -b experimental && mv programpack programpack-exp-branch;
 cd programpack-exp-branch;
 make sinstall && make sclean;
 cd ..;
