@@ -22,11 +22,11 @@ _empty            = ''
 _emptyb           = b''
 _os               = system().strip().lower()
 _server           = 'https://github.com/ProgramPack/hub'
-_request_base     = '{}/raw/main/apps/'.format(_server)
-_server_p_rbase   = _server + _request_base
+_request_base     = '/raw/main/apps/'
+_server_p_rbase   = '{}{}'.format(_server, _request_base)
 
-def _get_text(url): return r_get(url).text
-def _get_json(url): return r_get(url).json()
+def _get_text(url): return str(r_get(url).text)
+def _get_json(url): return loads(_get_text(url).strip())
 def _decode(b: bytes or bytearray) -> str: return b.decode('utf-8')
 def _PropertyBlocked(): raise RuntimeError('Property is privated; blocked')
 def _get_file_sha256(filename: str = ''):
@@ -185,5 +185,6 @@ def hub_get_meta(name: str, domain: str, author: str): return _get_json(hub_get_
 def hub_download_s(name: str, domain: str, author: str): return _get_text(hub_get_meta(name, domain, author)['link'])
 def hub_download(name: str, domain: str, author: str, output: str = 'download.propack'):
     data = hub_download_s(name, domain, author)
-    with open(str(output).strip(), 'rb+') as f:
+    with open(str(output).strip(), 'w+') as f:
         f.write(data)
+    chmod(output, 0o777)

@@ -52,7 +52,7 @@ Commands:
     manifest <fn>
         Print manifest of file
     hub
-        hub download <name> <domain> <author>
+        hub download <name> <domain> <author> <output>
             Will download ProgramPack file by name, domain and author from hub.'''
 
 if 'help' in str(argv1):
@@ -86,7 +86,7 @@ elif argv1 == 'hub':
     if argv2:
         if argv2 == 'download':
             if argv3 and argv4 and argv5:
-                propack.hub_download(argv3, argv4, argv5, argv6)
+                propack.hub_download(argv3, argv4, argv5, argv6 or 'output.txt')
             else:
                 print('usage: hub download <name> <domain> <author> [output]')
         else: print('Unknown hub command. See --help')
