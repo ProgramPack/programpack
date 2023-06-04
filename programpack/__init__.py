@@ -108,7 +108,7 @@ class PackedProgram:
                     else:
                         self.archive.extract(current_file, tmpresfold_n)
                         move_file(join(tmpresfold_n, current_file), join(tmpresfold_n, dest))
-                        rmtree(join(tmpresfold_n, 'Resources'))
+                        rmtree(join(tmpresfold_n, 'Resources'), ignore_errors = True)
                 del current_file
             args.append(tmpresfold_n)
         if autocall:
