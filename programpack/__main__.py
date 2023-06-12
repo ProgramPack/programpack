@@ -4,13 +4,20 @@ from os import system as execute
 from tempfile import gettempdir as get_temp_dir
 import programpack as propack
 
-def pull_from_git():
-    execute(f'''cd {get_temp_dir()};
-git clone https://github.com/ProgramPack/programpack.git -b experimental && mv programpack programpack-exp-branch;
-cd programpack-exp-branch;
+def pull_from_git(branch):
+    cmd = f'cd {get_temp_dir()};\n'
+    if branch:
+        branch = branch.strip()
+        cmd += f'git clone https://github.com/ProgramPack/programpack.git -b "{branch}" && mv programpack programpack-custom-branch;\n'
+    else:
+        cmd += f'git clone https://github.com/ProgramPack/programpack.git -b experimental && mv programpack programpack-exp-branch;\n'
+    cmd += '''cd programpack-exp-branch;
 make sinstall && make sclean;
 cd ..;
-true && rm -rf programpack-exp-branch;''')
+true && '''
+    if branch: cmd += 'rm -rf programpack-custom-branch;'
+    else: cmd += 'rm -rf programpack-exp-branch;'
+    execute(cmd)
 
 try: argv1 = args[1]
 except IndexError: argv1 = None
@@ -47,8 +54,9 @@ Commands:
         Will attempt to remove the shebang(s) from given file
     create <source> <destination>
         Create archive from directory name
-    pull
+    pull [branch]
         Update `ProgramPack` to latest version
+        If `branch` is used, it will pull from branch.
     version
         See current version
     manifest <fn>
@@ -80,7 +88,7 @@ elif argv1 == 'create':
         propack.create_archive(argv2, argv3 or 'create')
     else:
         print('usage: create <source> <destination>')
-elif argv1 == 'pull': pull_from_git()
+elif argv1 == 'pull': pull_from_git(branch = argv2)
 elif argv1 == 'version': print('ProgramPack - Version {}'.format(propack.__version__))
 elif argv1 == 'manifest':
     if argv2:
