@@ -2,6 +2,7 @@
 from sys import argv as args
 from os import system as execute
 from tempfile import gettempdir as get_temp_dir
+from json import dumps as dump_to_json
 import programpack as propack
 
 def pull_from_git(branch):
@@ -57,6 +58,8 @@ Commands:
     pull [branch]
         Update `ProgramPack` to latest version
         If `branch` is used, it will pull from branch.
+    info
+        See all information about current `ProgramPack` version in JSON
     version
         See current version
     manifest <fn>
@@ -89,6 +92,7 @@ elif argv1 == 'create':
     else:
         print('usage: create <source> <destination>')
 elif argv1 == 'pull': pull_from_git(branch = argv2)
+elif argv1 == 'info': print(str(dump_to_json(propack.__meta__)))
 elif argv1 == 'version': print('ProgramPack - Version {}'.format(propack.__version__))
 elif argv1 == 'manifest':
     if argv2:
