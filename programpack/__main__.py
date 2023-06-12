@@ -24,6 +24,8 @@ try: argv5 = args[5]
 except IndexError: argv5 = None
 try: argv6 = args[6]
 except IndexError: argv6 = None
+try: argv6 = args[7]
+except IndexError: argv7 = None
 
 help_message = '''--- ProgramPack ---
 Commands:
@@ -52,8 +54,9 @@ Commands:
     manifest <fn>
         Print manifest of file
     hub
-        hub download <name> <domain> <author> <output>
+        hub download <name> <domain> <author> [output]
             Will download ProgramPack file by name, domain and author from hub.'''
+verbose = ('--verbose' in args)
 
 if 'help' in str(argv1):
     print(help_message)
@@ -68,7 +71,7 @@ elif argv1 == 'run':
         if argv2 == '--virtual': program = propack.PackedProgram(argv3)
         else: program = propack.PackedProgram(argv2)
         program.read()
-        if not '--disable-icon-update' in args: program.update_icon()
+        if not '--disable-icon-update' in args: program.update_icon(verbose = verbose)
         program.run(virtual = ('--virtual' in args))
         program.close()
     else: print('usage: run <filename>')
