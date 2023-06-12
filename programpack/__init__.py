@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import zipfile
+import logging
 from json import loads, dumps
 from tempfile import NamedTemporaryFile as TempFile, gettempdir
 from os.path import sep, join, basename, dirname, abspath, relpath, expanduser
@@ -126,10 +127,11 @@ class PackedProgram:
         rmtree(self.tmpresfold, True)
         self.archive.close()
         self.closed = property(lambda: True) # , _PropertyBlocked()
-    def update_icon(self, _clean: bool = False) -> bool:
+    def update_icon(self, _clean: bool = False, verbose: bool = False) -> bool:
         '''Read file icon (if exists) and update it if needed'''
         if not self.icon_path: return False
         data = self.archive.read(self.icon_path)
+        if verbose: logging.debug(f'Icon path: {self.icon_path}')
         with TempFile(mode = 'wb+', delete = False) as tempf:
             tempf.write(data)
             tempf_name = tempf.name
@@ -140,16 +142,21 @@ class PackedProgram:
                 )
                 + '.png'
             )
+            if verbose: logging.debug(f'Old location of `tempf`: {tempf_name}')
+            if verbose: logging.debug(f'New location of `tempf`: {tempf.name}')
             move_file(tempf_name, tempf.name)
             del tempf_name
             source_filename = self.original_name.strip() or 'unknown'
+            cmd = f'gio set -t string {source_filename} metadata::custom-icon file://{tempf.name}'
+            if verbose: logging.debug(f'Command: `{cmd}`')
             run(
                 [
-                    f'gio set -t string {source_filename} metadata::custom-icon file://{tempf.name}'
+                    cmd
                 ],
                 shell = True,
                 executable = '/usr/bin/bash'
                 )
+            if verbose: logging.info('Command finished')
         if _clean:
             warn(
                 'Consider setting _clean to False because after updating icon will disappear',
