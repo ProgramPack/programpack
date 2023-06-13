@@ -2,15 +2,24 @@
 from sys import argv as args
 from os import system as execute
 from tempfile import gettempdir as get_temp_dir
+from json import dumps as dump_to_json
 import programpack as propack
 
-def pull_from_git():
-    execute(f'''cd {get_temp_dir()};
-git clone https://github.com/ProgramPack/programpack.git -b experimental && mv programpack programpack-exp-branch;
-cd programpack-exp-branch;
-make sinstall && make sclean;
+def pull_from_git(branch):
+    cmd = f'cd {get_temp_dir()};\n'
+    if branch:
+        branch = branch.strip()
+        cmd += f'git clone https://github.com/ProgramPack/programpack.git -b "{branch}" && mv programpack programpack-custom-branch;\n'
+        cmd += 'cd programpack-custom-branch;\n'
+    else:
+        cmd += f'git clone https://github.com/ProgramPack/programpack.git -b experimental && mv programpack programpack-exp-branch;\n'
+        cmd += 'cd programpack-exp-branch;\n'
+    cmd += '''make sinstall && make sclean;
 cd ..;
-true && rm -rf programpack-exp-branch;''')
+true && '''
+    if branch: cmd += 'rm -rf programpack-custom-branch;'
+    else: cmd += 'rm -rf programpack-exp-branch;'
+    execute(cmd)
 
 try: argv1 = args[1]
 except IndexError: argv1 = None
@@ -47,12 +56,18 @@ Commands:
         Will attempt to remove the shebang(s) from given file
     create <source> <destination>
         Create archive from directory name
-    pull
+    pull [branch]
         Update `ProgramPack` to latest version
+        If `branch` is used, it will pull from branch.
+    info
+        See all information about current `ProgramPack` version in JSON
     version
         See current version
     manifest <fn>
         Print manifest of file
+    icon
+        icon update <name>
+            Will update file icon manually.
     hub
         hub download <name> <domain> <author> [output]
             Will download ProgramPack file by name, domain and author from hub.'''
@@ -80,11 +95,23 @@ elif argv1 == 'create':
         propack.create_archive(argv2, argv3 or 'create')
     else:
         print('usage: create <source> <destination>')
-elif argv1 == 'pull': pull_from_git()
+elif argv1 == 'pull': pull_from_git(branch = argv2)
+elif argv1 == 'info': print(str(dump_to_json(propack.__meta__)))
 elif argv1 == 'version': print('ProgramPack - Version {}'.format(propack.__version__))
 elif argv1 == 'manifest':
     if argv2:
-        print(propack.get_manifest(argv2), end = '')
+        try: print(propack.get_manifest(argv2), end = '')
+        except FileNotFoundError: print('error: file {argv2} doesn\'t exist')
+    else: print('usage: manifest <fn>')
+elif argv1 == 'icon':
+    if argv2:
+        try:
+            program = propack.PackedProgram(argv2)
+            program.update_icon(verbose = verbose)
+        except FileNotFoundError:
+            print(f'error: file {argv2} doesn\'t exist')
+    else:
+        print('usage: icon <update, ...>')
 elif argv1 == 'hub':
     if argv2:
         if argv2 == 'download':
@@ -94,7 +121,7 @@ elif argv1 == 'hub':
                 print('usage: hub download <name> <domain> <author> [output]')
         else: print('Unknown hub command. See --help')
     else:
-        print('usage: hub <download, ...> <>')
+        print('usage: hub <download, ...> <...>')
 else:
     if len(args) <= 1: print('No args given. See --help.')
     else: print('Invalid arguments. See --help for more info.')

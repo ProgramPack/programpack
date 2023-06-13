@@ -12,10 +12,16 @@ from platform import system
 from warnings import warn
 from requests import get as r_get
 
+__app_name__ = 'ProgramPack'
 __all__ = [
     'PackedProgram', 'convert_file_to_executable', 'deconvert', 'create_archive'
 ]
 __version__ = '0.0.1'
+__meta__ = {
+    'name': __app_name__,
+    'version': __version__,
+    '__all__': __all__
+}
 
 shebang           = b'#!/usr/bin/env -S python3 -m programpack run\n'
 shebang_v         = b'#!/usr/bin/env -S python3 -m programpack run --virtual\n'
