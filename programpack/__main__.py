@@ -10,10 +10,11 @@ def pull_from_git(branch):
     if branch:
         branch = branch.strip()
         cmd += f'git clone https://github.com/ProgramPack/programpack.git -b "{branch}" && mv programpack programpack-custom-branch;\n'
+        cmd += 'cd programpack-custom-branch;\n'
     else:
         cmd += f'git clone https://github.com/ProgramPack/programpack.git -b experimental && mv programpack programpack-exp-branch;\n'
-    cmd += '''cd programpack-exp-branch;
-make sinstall && make sclean;
+        cmd += 'cd programpack-exp-branch;\n'
+    cmd += '''make sinstall && make sclean;
 cd ..;
 true && '''
     if branch: cmd += 'rm -rf programpack-custom-branch;'
