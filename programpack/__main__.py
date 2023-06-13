@@ -65,6 +65,9 @@ Commands:
         See current version
     manifest <fn>
         Print manifest of file
+    icon
+        icon update <name>
+            Will update file icon manually.
     hub
         hub download <name> <domain> <author> [output]
             Will download ProgramPack file by name, domain and author from hub.'''
@@ -98,8 +101,17 @@ elif argv1 == 'version': print('ProgramPack - Version {}'.format(propack.__versi
 elif argv1 == 'manifest':
     if argv2:
         try: print(propack.get_manifest(argv2), end = '')
-        except FileNotFoundError: print('error: file doesn\'t exist')
+        except FileNotFoundError: print('error: file {argv2} doesn\'t exist')
     else: print('usage: manifest <fn>')
+elif argv1 == 'icon':
+    if argv2:
+        try:
+            program = propack.PackedProgram(argv2)
+            program.update_icon(verbose = verbose)
+        except FileNotFoundError:
+            print(f'error: file {argv2} doesn\'t exist')
+    else:
+        print('usage: icon <update, ...>')
 elif argv1 == 'hub':
     if argv2:
         if argv2 == 'download':
@@ -109,7 +121,7 @@ elif argv1 == 'hub':
                 print('usage: hub download <name> <domain> <author> [output]')
         else: print('Unknown hub command. See --help')
     else:
-        print('usage: hub <download, ...> <>')
+        print('usage: hub <download, ...> <...>')
 else:
     if len(args) <= 1: print('No args given. See --help.')
     else: print('Invalid arguments. See --help for more info.')
