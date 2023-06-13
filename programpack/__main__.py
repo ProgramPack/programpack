@@ -97,7 +97,9 @@ elif argv1 == 'info': print(str(dump_to_json(propack.__meta__)))
 elif argv1 == 'version': print('ProgramPack - Version {}'.format(propack.__version__))
 elif argv1 == 'manifest':
     if argv2:
-        print(propack.get_manifest(argv2), end = '')
+        try: print(propack.get_manifest(argv2), end = '')
+        except FileNotFoundError: print('error: file doesn\'t exist')
+    else: print('usage: manifest <fn>')
 elif argv1 == 'hub':
     if argv2:
         if argv2 == 'download':
